@@ -1,9 +1,31 @@
 import { createClient } from '@supabase/supabase-js'
 
-const adminUrl = process.env.NEXT_PUBLIC_DB_ADMIN_URL || 'https://placeholder.supabase.co'
-const adminKey = process.env.DB_ADMIN_SERVICE_ROLE_KEY || 'placeholder-service-role-key'
-const userUrl = process.env.NEXT_PUBLIC_DB_USER_URL || 'https://placeholder.supabase.co'
-const userKey = process.env.DB_USER_SERVICE_ROLE_KEY || 'placeholder-service-role-key'
+function sanitizeUrl(raw?: string): string {
+  if (!raw) return 'https://placeholder.supabase.co'
+  const match = raw.match(/https?:\/\/[a-z0-9\-]+\.supabase\.co/i)
+  if (match) return match[0]
+  let cleaned = raw.replace(/[\[\]\s]/g, '')
+  if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+    cleaned = 'https://' + cleaned
+  }
+  try {
+    new URL(cleaned)
+    return cleaned
+  } catch {
+    return 'https://placeholder.supabase.co'
+  }
+}
+
+function sanitizeKey(raw?: string): string {
+  if (!raw) return 'placeholder-service-role-key'
+  const cleaned = raw.replace(/[\[\]\s]/g, '')
+  return cleaned || 'placeholder-service-role-key'
+}
+
+const adminUrl = sanitizeUrl(process.env.NEXT_PUBLIC_DB_ADMIN_URL)
+const adminKey = sanitizeKey(process.env.DB_ADMIN_SERVICE_ROLE_KEY)
+const userUrl = sanitizeUrl(process.env.NEXT_PUBLIC_DB_USER_URL)
+const userKey = sanitizeKey(process.env.DB_USER_SERVICE_ROLE_KEY)
 
 // Client for DB_ADMIN (Control Plane - verified data)
 export const supabaseAdminDB = createClient(

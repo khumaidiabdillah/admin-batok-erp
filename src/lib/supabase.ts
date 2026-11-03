@@ -22,9 +22,9 @@ function sanitizeKey(raw?: string): string {
   return cleaned || 'placeholder-service-role-key'
 }
 
-const adminUrl = sanitizeUrl(process.env.NEXT_PUBLIC_DB_ADMIN_URL)
+const adminUrl = sanitizeUrl(process.env.DB_ADMIN_URL ?? process.env.NEXT_PUBLIC_DB_ADMIN_URL)
 const adminKey = sanitizeKey(process.env.DB_ADMIN_SERVICE_ROLE_KEY)
-const userUrl = sanitizeUrl(process.env.NEXT_PUBLIC_DB_USER_URL)
+const userUrl = sanitizeUrl(process.env.DB_USER_URL ?? process.env.NEXT_PUBLIC_DB_USER_URL)
 const userKey = sanitizeKey(process.env.DB_USER_SERVICE_ROLE_KEY)
 
 // Client for DB_ADMIN (Control Plane - verified data)
